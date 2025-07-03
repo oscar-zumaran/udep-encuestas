@@ -1,12 +1,12 @@
 -- =====================================================
 -- MODELO DE BASE DE DATOS - SISTEMA DE ENCUESTAS UDEP
 -- =====================================================
--- Basado en las Especificaciones Técnicas Funcionales
--- Convenciones aplicadas según documento de estándares
+-- Basado en las Especificaciones TÃ©cnicas Funcionales
+-- Convenciones aplicadas segÃºn documento de estÃ¡ndares
 -- =====================================================
 
 -- =====================================================
--- 1. MÓDULO: GESTIÓN DE PERIODOS Y DEPARTAMENTOS
+-- 1. MÃ“DULO: GESTIÃ“N DE PERIODOS Y DEPARTAMENTOS
 -- =====================================================
 
 -- Tabla: Departamentos
@@ -14,11 +14,14 @@ CREATE TABLE Departamento (
     iIdDepartamento INT IDENTITY(1,1) PRIMARY KEY,
     cNombreDepartamento VARCHAR(256) NOT NULL UNIQUE,
     cCorreoInstitucional VARCHAR(100) NOT NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE()
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
 );
 
--- Tabla: Periodos Académicos
+-- Tabla: Periodos AcadÃ©micos
 CREATE TABLE Periodo (
     iIdPeriodo INT IDENTITY(1,1) PRIMARY KEY,
     iAnioAcademico INT NOT NULL,
@@ -26,16 +29,19 @@ CREATE TABLE Periodo (
     cNombrePeriodo VARCHAR(100) NOT NULL,
     fFechaInicio DATE NOT NULL,
     fFechaCulminacion DATE NOT NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT UK_Periodo_Anio_Numero UNIQUE (iAnioAcademico, cNumeroPeriodo)
 );
 
 -- =====================================================
--- 2. MÓDULO: GESTIÓN DE ASIGNATURAS
+-- 2. MÃ“DULO: GESTIÃ“N DE ASIGNATURAS
 -- =====================================================
 
--- Tabla: Componentes Académicos
+-- Tabla: Componentes AcadÃ©micos
 CREATE TABLE Componente (
     iIdComponente INT IDENTITY(1,1) PRIMARY KEY,
     cSiglas VARCHAR(10) NOT NULL UNIQUE,
@@ -43,8 +49,11 @@ CREATE TABLE Componente (
     cDescripcion VARCHAR(8000) NULL,
     bEliminarOpcionesEncuesta BIT NOT NULL DEFAULT 0,
     bVisibleReportes BIT NOT NULL DEFAULT 1,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE()
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
 );
 
 -- Tabla: Asignaturas/Cursos
@@ -60,81 +69,104 @@ CREATE TABLE Asignatura (
     bTieneCapitulos BIT NOT NULL DEFAULT 0,
     iNumeroCapitulos INT NOT NULL DEFAULT 0 CHECK (iNumeroCapitulos BETWEEN 0 AND 5),
     bTieneSedeHospitalaria BIT NOT NULL DEFAULT 0,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_Asignatura_Departamento FOREIGN KEY (iIdDepartamento) REFERENCES Departamento(iIdDepartamento),
     CONSTRAINT FK_Asignatura_Componente FOREIGN KEY (iIdComponente) REFERENCES Componente(iIdComponente)
 );
 
--- Tabla: Capítulos de Asignaturas
+-- Tabla: CapÃ­tulos de Asignaturas
 CREATE TABLE Capitulo (
     iIdCapitulo INT IDENTITY(1,1) PRIMARY KEY,
     iIdAsignatura INT NOT NULL,
-    cNumeroCapitulo VARCHAR(10) NOT NULL, -- Números romanos: I, II, III, etc.
+    cNumeroCapitulo VARCHAR(10) NOT NULL, -- NÃºmeros romanos: I, II, III, etc.
     cNombreCapitulo VARCHAR(128) NOT NULL,
     cDescripcionCapitulo VARCHAR(8000) NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_Capitulo_Asignatura FOREIGN KEY (iIdAsignatura) REFERENCES Asignatura(iIdAsignatura),
     CONSTRAINT UK_Capitulo_Asignatura_Numero UNIQUE (iIdAsignatura, cNumeroCapitulo)
 );
 
--- Tabla: Actividades Académicas
+-- Tabla: Actividades AcadÃ©micas
 CREATE TABLE Actividad (
     iIdActividad INT IDENTITY(1,1) PRIMARY KEY,
     cNombreActividad VARCHAR(128) NOT NULL,
     cDescripcionActividad VARCHAR(8000) NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE()
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
 );
 
--- Tabla: Asignación de Actividades por Capítulo/Asignatura
+-- Tabla: AsignaciÃ³n de Actividades por CapÃ­tulo/Asignatura
 CREATE TABLE Asignacion_Actividad_Capitulo (
     iIdAsignacion INT IDENTITY(1,1) PRIMARY KEY,
     iIdAsignatura INT NOT NULL,
-    iIdCapitulo INT NULL, -- NULL para "Sin Capítulos"
+    iIdCapitulo INT NULL, -- NULL para "Sin CapÃ­tulos"
     iIdActividad INT NOT NULL,
     cUsuarioAsignador VARCHAR(100) NOT NULL,
     fFechaAsignacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_AsigActCap_Asignatura FOREIGN KEY (iIdAsignatura) REFERENCES Asignatura(iIdAsignatura),
     CONSTRAINT FK_AsigActCap_Capitulo FOREIGN KEY (iIdCapitulo) REFERENCES Capitulo(iIdCapitulo),
     CONSTRAINT FK_AsigActCap_Actividad FOREIGN KEY (iIdActividad) REFERENCES Actividad(iIdActividad),
     CONSTRAINT UK_AsigActCap_Actividad_Capitulo UNIQUE (iIdActividad, iIdCapitulo, iIdAsignatura)
 );
 
--- Tabla: Asignación de Componentes a Actividades
+-- Tabla: AsignaciÃ³n de Componentes a Actividades
 CREATE TABLE Asignacion_Componente_Actividad (
     iIdAsignacion INT IDENTITY(1,1) PRIMARY KEY,
     iIdActividad INT NOT NULL,
     iIdComponente INT NOT NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_AsigCompAct_Actividad FOREIGN KEY (iIdActividad) REFERENCES Actividad(iIdActividad),
     CONSTRAINT FK_AsigCompAct_Componente FOREIGN KEY (iIdComponente) REFERENCES Componente(iIdComponente),
     CONSTRAINT UK_AsigCompAct_Actividad_Componente UNIQUE (iIdActividad, iIdComponente)
 );
 
--- Tabla: Dimensiones Académicas
+-- Tabla: Dimensiones AcadÃ©micas
 CREATE TABLE Dimension (
     iIdDimension INT IDENTITY(1,1) PRIMARY KEY,
     cNombreDimension VARCHAR(128) NOT NULL UNIQUE,
     cDescripcion VARCHAR(8000) NOT NULL UNIQUE,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE()
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
 );
 
 -- Tabla: Preguntas del Sistema
 CREATE TABLE Pregunta (
     iIdPregunta INT IDENTITY(1,1) PRIMARY KEY,
     iIdComponente INT NOT NULL,
-    cTipoPregunta CHAR(1) NOT NULL CHECK (cTipoPregunta IN ('O', 'T', 'C', 'L')), -- Opción, Texto, Calificación, Likert
+    cTipoPregunta CHAR(1) NOT NULL CHECK (cTipoPregunta IN ('O', 'T', 'C', 'L')), -- OpciÃ³n, Texto, CalificaciÃ³n, Likert
     cDescripcion VARCHAR(8000) NOT NULL UNIQUE,
     bVariasRespuestas BIT NULL, -- Solo para Tipo 'O'
     bRespuestaLarga BIT NULL DEFAULT 1, -- Solo para Tipo 'T'
     iNivelCalificacion INT NULL CHECK (iNivelCalificacion BETWEEN 1 AND 10), -- Solo para Tipo 'C'
     bObligatoria BIT NOT NULL DEFAULT 0,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_Pregunta_Componente FOREIGN KEY (iIdComponente) REFERENCES Componente(iIdComponente)
 );
 
@@ -143,8 +175,11 @@ CREATE TABLE Opcion_Pregunta (
     iIdOpcion INT IDENTITY(1,1) PRIMARY KEY,
     iIdPregunta INT NOT NULL,
     cDescripcionOpcion VARCHAR(8000) NOT NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_OpcionPregunta_Pregunta FOREIGN KEY (iIdPregunta) REFERENCES Pregunta(iIdPregunta)
 );
 
@@ -153,16 +188,19 @@ CREATE TABLE Instruccion_Pregunta (
     iIdInstruccion INT IDENTITY(1,1) PRIMARY KEY,
     iIdPregunta INT NOT NULL,
     cDescripcionInstruccion VARCHAR(8000) NOT NULL,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_InstruccionPregunta_Pregunta FOREIGN KEY (iIdPregunta) REFERENCES Pregunta(iIdPregunta)
 );
 
 -- =====================================================
--- 3. MÓDULO: GESTIÓN DE OFERTAS ACADÉMICAS
+-- 3. MÃ“DULO: GESTIÃ“N DE OFERTAS ACADÃ‰MICAS
 -- =====================================================
 
--- Tabla: Ofertas Académicas
+-- Tabla: Ofertas AcadÃ©micas
 CREATE TABLE Oferta_Academica (
     iIdOfertaAcademica INT IDENTITY(1,1) PRIMARY KEY,
     iIdPeriodo INT NOT NULL,
@@ -173,8 +211,11 @@ CREATE TABLE Oferta_Academica (
     iDesaprobados INT NOT NULL CHECK (iDesaprobados >= 0),
     iRetirados INT NOT NULL CHECK (iRetirados >= 0),
     iAnulaciones INT NOT NULL CHECK (iAnulaciones >= 0),
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_OfertaAcademica_Periodo FOREIGN KEY (iIdPeriodo) REFERENCES Periodo(iIdPeriodo),
     CONSTRAINT FK_OfertaAcademica_Asignatura FOREIGN KEY (iIdAsignatura) REFERENCES Asignatura(iIdAsignatura),
     CONSTRAINT UK_OfertaAcademica_Periodo_Asignatura UNIQUE (iIdPeriodo, iIdAsignatura),
@@ -183,7 +224,7 @@ CREATE TABLE Oferta_Academica (
 );
 
 -- =====================================================
--- 4. MÓDULO: SISTEMA DE ENCUESTAS
+-- 4. MÃ“DULO: SISTEMA DE ENCUESTAS
 -- =====================================================
 
 -- Tabla: Encuestas
@@ -196,8 +237,11 @@ CREATE TABLE Encuesta (
     fFechaHoraFin DATETIME2 NOT NULL,
     bEsAnonima BIT NOT NULL DEFAULT 0,
     bActiva BIT NOT NULL DEFAULT 1,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_Encuesta_OfertaAcademica FOREIGN KEY (iIdOfertaAcademica) REFERENCES Oferta_Academica(iIdOfertaAcademica),
     CONSTRAINT CK_Encuesta_FechaInicio CHECK (fFechaHoraInicio < fFechaHoraFin)
 );
@@ -215,8 +259,11 @@ CREATE TABLE Pregunta_Encuesta (
     bObligatoria BIT NOT NULL DEFAULT 0,
     iOrden INT NOT NULL DEFAULT 0,
     bActiva BIT NOT NULL DEFAULT 1,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_PreguntaEncuesta_Encuesta FOREIGN KEY (iIdEncuesta) REFERENCES Encuesta(iIdEncuesta),
     CONSTRAINT FK_PreguntaEncuesta_Pregunta FOREIGN KEY (iIdPregunta) REFERENCES Pregunta(iIdPregunta)
 );
@@ -227,11 +274,14 @@ CREATE TABLE Opcion_Pregunta_Encuesta (
     iIdEncuesta INT NOT NULL,
     iIdPreguntaEncuesta INT NOT NULL,
     iIdPregunta INT NOT NULL,
-    iIdOpcionPregunta INT NOT NULL, -- Referencia a opción original
+    iIdOpcionPregunta INT NOT NULL, -- Referencia a opciÃ³n original
     cDescripcionOpcion VARCHAR(8000) NOT NULL,
     bActiva BIT NOT NULL DEFAULT 1,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_OpcionPreguntaEnc_Encuesta FOREIGN KEY (iIdEncuesta) REFERENCES Encuesta(iIdEncuesta),
     CONSTRAINT FK_OpcionPreguntaEnc_PreguntaEncuesta FOREIGN KEY (iIdPreguntaEncuesta) REFERENCES Pregunta_Encuesta(iIdPreguntaEncuesta),
     CONSTRAINT FK_OpcionPreguntaEnc_Pregunta FOREIGN KEY (iIdPregunta) REFERENCES Pregunta(iIdPregunta),
@@ -244,11 +294,14 @@ CREATE TABLE Instruccion_Pregunta_Encuesta (
     iIdEncuesta INT NOT NULL,
     iIdPreguntaEncuesta INT NOT NULL,
     iIdPregunta INT NOT NULL,
-    iIdInstruccionPregunta INT NOT NULL, -- Referencia a instrucción original
+    iIdInstruccionPregunta INT NOT NULL, -- Referencia a instrucciÃ³n original
     cDescripcionInstruccion VARCHAR(8000) NOT NULL,
     bActiva BIT NOT NULL DEFAULT 1,
-    cUsuarioCreador VARCHAR(100) NOT NULL,
-    fFechaCreacion DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_InstruccionPreguntaEnc_Encuesta FOREIGN KEY (iIdEncuesta) REFERENCES Encuesta(iIdEncuesta),
     CONSTRAINT FK_InstruccionPreguntaEnc_PreguntaEncuesta FOREIGN KEY (iIdPreguntaEncuesta) REFERENCES Pregunta_Encuesta(iIdPreguntaEncuesta),
     CONSTRAINT FK_InstruccionPreguntaEnc_Pregunta FOREIGN KEY (iIdPregunta) REFERENCES Pregunta(iIdPregunta),
@@ -256,30 +309,40 @@ CREATE TABLE Instruccion_Pregunta_Encuesta (
 );
 
 -- =====================================================
--- 5. MÓDULO: RESPUESTAS DE ENCUESTAS
+-- 5. MÃ“DULO: RESPUESTAS DE ENCUESTAS
 -- =====================================================
 
 -- Tabla: Sesiones de Encuesta
 CREATE TABLE Sesion_Encuesta (
     iIdSesion INT IDENTITY(1,1) PRIMARY KEY,
     iIdEncuesta INT NOT NULL,
-    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anónimas
+    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anÃ³nimas
     fFechaInicio DATETIME2 NOT NULL DEFAULT GETDATE(),
     fFechaCompletado DATETIME2 NULL,
     cEstado VARCHAR(20) NOT NULL DEFAULT 'EN_PROGRESO' CHECK (cEstado IN ('EN_PROGRESO', 'COMPLETADA')),
     cIPAddress VARCHAR(45) NULL,
     cCodigoConfirmacion VARCHAR(50) NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_SesionEncuesta_Encuesta FOREIGN KEY (iIdEncuesta) REFERENCES Encuesta(iIdEncuesta)
 );
 
--- Tabla: Respuestas Tipo Opción
+-- Tabla: Respuestas Tipo OpciÃ³n
 CREATE TABLE Respuesta_Opcion (
     iIdRespuesta INT IDENTITY(1,1) PRIMARY KEY,
     iIdSesion INT NOT NULL,
     iIdPreguntaEncuesta INT NOT NULL,
     iIdOpcionSeleccionada INT NOT NULL,
-    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anónimas
+    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anÃ³nimas
     fFechaRespuesta DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_RespuestaOpcion_Sesion FOREIGN KEY (iIdSesion) REFERENCES Sesion_Encuesta(iIdSesion),
     CONSTRAINT FK_RespuestaOpcion_PreguntaEncuesta FOREIGN KEY (iIdPreguntaEncuesta) REFERENCES Pregunta_Encuesta(iIdPreguntaEncuesta),
     CONSTRAINT FK_RespuestaOpcion_OpcionEncuesta FOREIGN KEY (iIdOpcionSeleccionada) REFERENCES Opcion_Pregunta_Encuesta(iIdOpcionPreguntaEncuesta)
@@ -291,20 +354,30 @@ CREATE TABLE Respuesta_Texto (
     iIdSesion INT NOT NULL,
     iIdPreguntaEncuesta INT NOT NULL,
     cTextoRespuesta VARCHAR(8000) NULL,
-    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anónimas
+    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anÃ³nimas
     fFechaRespuesta DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_RespuestaTexto_Sesion FOREIGN KEY (iIdSesion) REFERENCES Sesion_Encuesta(iIdSesion),
     CONSTRAINT FK_RespuestaTexto_PreguntaEncuesta FOREIGN KEY (iIdPreguntaEncuesta) REFERENCES Pregunta_Encuesta(iIdPreguntaEncuesta)
 );
 
--- Tabla: Respuestas Tipo Calificación
+-- Tabla: Respuestas Tipo CalificaciÃ³n
 CREATE TABLE Respuesta_Calificacion (
     iIdRespuesta INT IDENTITY(1,1) PRIMARY KEY,
     iIdSesion INT NOT NULL,
     iIdPreguntaEncuesta INT NOT NULL,
     iValorCalificacion INT NOT NULL CHECK (iValorCalificacion BETWEEN 1 AND 10),
-    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anónimas
+    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anÃ³nimas
     fFechaRespuesta DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_RespuestaCalificacion_Sesion FOREIGN KEY (iIdSesion) REFERENCES Sesion_Encuesta(iIdSesion),
     CONSTRAINT FK_RespuestaCalificacion_PreguntaEncuesta FOREIGN KEY (iIdPreguntaEncuesta) REFERENCES Pregunta_Encuesta(iIdPreguntaEncuesta)
 );
@@ -316,8 +389,13 @@ CREATE TABLE Respuesta_Likert (
     iIdPreguntaEncuesta INT NOT NULL,
     iIdOpcionSeleccionada INT NOT NULL,
     iIdInstruccion INT NOT NULL,
-    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anónimas
+    cUsuarioRespuesta VARCHAR(100) NULL, -- NULL para encuestas anÃ³nimas
     fFechaRespuesta DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     CONSTRAINT FK_RespuestaLikert_Sesion FOREIGN KEY (iIdSesion) REFERENCES Sesion_Encuesta(iIdSesion),
     CONSTRAINT FK_RespuestaLikert_PreguntaEncuesta FOREIGN KEY (iIdPreguntaEncuesta) REFERENCES Pregunta_Encuesta(iIdPreguntaEncuesta),
     CONSTRAINT FK_RespuestaLikert_OpcionEncuesta FOREIGN KEY (iIdOpcionSeleccionada) REFERENCES Opcion_Pregunta_Encuesta(iIdOpcionPreguntaEncuesta),
@@ -325,21 +403,26 @@ CREATE TABLE Respuesta_Likert (
 );
 
 -- =====================================================
--- 6. TABLAS DE AUDITORÍA Y LOGS
+-- 6. TABLAS DE AUDITORÃA Y LOGS
 -- =====================================================
 
 -- Tabla: Logs de Acceso al Sistema
 CREATE TABLE Log_Acceso (
     iIdLogAcceso INT IDENTITY(1,1) PRIMARY KEY,
-    cUsuario VARCHAR(100) NULL, -- NULL para accesos anónimos
+    cUsuario VARCHAR(100) NULL, -- NULL para accesos anÃ³nimos
     cIPAddress VARCHAR(45) NOT NULL,
     fTimestamp DATETIME2 NOT NULL DEFAULT GETDATE(),
     cResultado VARCHAR(20) NOT NULL CHECK (cResultado IN ('EXITO', 'FALLO', 'MFA_REQUERIDO')),
     cUserAgent VARCHAR(500) NULL,
-    cDetallesError VARCHAR(1000) NULL
+    cDetallesError VARCHAR(1000) NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
 );
 
--- Tabla: Logs de Auditoría General
+-- Tabla: Logs de AuditorÃ­a General
 CREATE TABLE Log_Auditoria (
     iIdLogAuditoria INT IDENTITY(1,1) PRIMARY KEY,
     cTablaAfectada VARCHAR(100) NOT NULL,
@@ -347,16 +430,21 @@ CREATE TABLE Log_Auditoria (
     cOperacion VARCHAR(20) NOT NULL CHECK (cOperacion IN ('INSERT', 'UPDATE', 'DELETE')),
     cUsuario VARCHAR(100) NOT NULL,
     fTimestamp DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
     cValoresAnteriores VARCHAR(8000) NULL,
     cValoresNuevos VARCHAR(8000) NULL,
     cIPAddress VARCHAR(45) NULL
 );
 
 -- =====================================================
--- 7. ÍNDICES PARA OPTIMIZACIÓN
+-- 7. ÃNDICES PARA OPTIMIZACIÃ“N
 -- =====================================================
 
--- Índices para mejorar rendimiento de consultas frecuentes
+-- Ãndices para mejorar rendimiento de consultas frecuentes
 CREATE INDEX IX_Asignatura_Departamento ON Asignatura(iIdDepartamento);
 CREATE INDEX IX_Asignatura_Componente ON Asignatura(iIdComponente);
 CREATE INDEX IX_Capitulo_Asignatura ON Capitulo(iIdAsignatura);
@@ -371,17 +459,265 @@ CREATE INDEX IX_SesionEncuesta_Encuesta ON Sesion_Encuesta(iIdEncuesta);
 CREATE INDEX IX_LogAcceso_Usuario ON Log_Acceso(cUsuario);
 CREATE INDEX IX_LogAcceso_Timestamp ON Log_Acceso(fTimestamp);
 GO
+
+-- Procedimientos almacenados de mantenimiento y consulta
+-- Departamento
+CREATE PROCEDURE sp_Departamento_Listar
+    @iIdDepartamento INT = NULL
+AS
+BEGIN
+    SELECT * FROM Departamento
+    WHERE @iIdDepartamento IS NULL OR iIdDepartamento = @iIdDepartamento;
+END;
+GO
+
+CREATE PROCEDURE sp_Departamento_Mantenimiento
+    @OPERACION INT,
+    @iIdDepartamento INT = NULL,
+    @cNombreDepartamento VARCHAR(256) = NULL,
+    @cCorreoInstitucional VARCHAR(100) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Departamento (cNombreDepartamento, cCorreoInstitucional, cRegUser, fRegDate, bActive)
+        VALUES (@cNombreDepartamento, @cCorreoInstitucional, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Departamento SET
+            cNombreDepartamento = @cNombreDepartamento,
+            cCorreoInstitucional = @cCorreoInstitucional,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdDepartamento = @iIdDepartamento;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Departamento SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdDepartamento = @iIdDepartamento;
+    END
+END;
+GO
+
+-- Periodo
+CREATE PROCEDURE sp_Periodo_Listar
+    @iIdPeriodo INT = NULL
+AS
+BEGIN
+    SELECT * FROM Periodo
+    WHERE @iIdPeriodo IS NULL OR iIdPeriodo = @iIdPeriodo;
+END;
+GO
+
+CREATE PROCEDURE sp_Periodo_Mantenimiento
+    @OPERACION INT,
+    @iIdPeriodo INT = NULL,
+    @iAnioAcademico INT = NULL,
+    @cNumeroPeriodo VARCHAR(10) = NULL,
+    @cNombrePeriodo VARCHAR(100) = NULL,
+    @fFechaInicio DATE = NULL,
+    @fFechaCulminacion DATE = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Periodo (iAnioAcademico, cNumeroPeriodo, cNombrePeriodo, fFechaInicio, fFechaCulminacion, cRegUser, fRegDate, bActive)
+        VALUES (@iAnioAcademico, @cNumeroPeriodo, @cNombrePeriodo, @fFechaInicio, @fFechaCulminacion, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Periodo SET
+            iAnioAcademico = @iAnioAcademico,
+            cNumeroPeriodo = @cNumeroPeriodo,
+            cNombrePeriodo = @cNombrePeriodo,
+            fFechaInicio = @fFechaInicio,
+            fFechaCulminacion = @fFechaCulminacion,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdPeriodo = @iIdPeriodo;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Periodo SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdPeriodo = @iIdPeriodo;
+    END
+END;
+GO
+
+-- Componente
+CREATE PROCEDURE sp_Componente_Listar
+    @iIdComponente INT = NULL
+AS
+BEGIN
+    SELECT * FROM Componente
+    WHERE @iIdComponente IS NULL OR iIdComponente = @iIdComponente;
+END;
+GO
+
+CREATE PROCEDURE sp_Componente_Mantenimiento
+    @OPERACION INT,
+    @iIdComponente INT = NULL,
+    @cSiglas VARCHAR(10) = NULL,
+    @cNombreComponente VARCHAR(100) = NULL,
+    @cDescripcion VARCHAR(8000) = NULL,
+    @bEliminarOpcionesEncuesta BIT = NULL,
+    @bVisibleReportes BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Componente (cSiglas, cNombreComponente, cDescripcion, bEliminarOpcionesEncuesta, bVisibleReportes, cRegUser, fRegDate, bActive)
+        VALUES (@cSiglas, @cNombreComponente, @cDescripcion, @bEliminarOpcionesEncuesta, @bVisibleReportes, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Componente SET
+            cSiglas = @cSiglas,
+            cNombreComponente = @cNombreComponente,
+            cDescripcion = @cDescripcion,
+            bEliminarOpcionesEncuesta = @bEliminarOpcionesEncuesta,
+            bVisibleReportes = @bVisibleReportes,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdComponente = @iIdComponente;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Componente SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdComponente = @iIdComponente;
+    END
+END;
+GO
+
+-- Asignatura
+CREATE PROCEDURE sp_Asignatura_Listar
+    @iIdAsignatura INT = NULL
+AS
+BEGIN
+    SELECT * FROM Asignatura
+    WHERE @iIdAsignatura IS NULL OR iIdAsignatura = @iIdAsignatura;
+END;
+GO
+
+CREATE PROCEDURE sp_Asignatura_Mantenimiento
+    @OPERACION INT,
+    @iIdAsignatura INT = NULL,
+    @iIdDepartamento INT = NULL,
+    @iIdComponente INT = NULL,
+    @cSiglas VARCHAR(10) = NULL,
+    @cNombreAsignatura VARCHAR(256) = NULL,
+    @iCiclo INT = NULL,
+    @iAnio INT = NULL,
+    @iCreditos INT = NULL,
+    @bTieneCapitulos BIT = NULL,
+    @iNumeroCapitulos INT = NULL,
+    @bTieneSedeHospitalaria BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Asignatura (
+            iIdDepartamento, iIdComponente, cSiglas, cNombreAsignatura, iCiclo,
+            iAnio, iCreditos, bTieneCapitulos, iNumeroCapitulos,
+            bTieneSedeHospitalaria, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdDepartamento, @iIdComponente, @cSiglas, @cNombreAsignatura, @iCiclo,
+            @iAnio, @iCreditos, @bTieneCapitulos, @iNumeroCapitulos,
+            @bTieneSedeHospitalaria, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Asignatura SET
+            iIdDepartamento = @iIdDepartamento,
+            iIdComponente = @iIdComponente,
+            cSiglas = @cSiglas,
+            cNombreAsignatura = @cNombreAsignatura,
+            iCiclo = @iCiclo,
+            iAnio = @iAnio,
+            iCreditos = @iCreditos,
+            bTieneCapitulos = @bTieneCapitulos,
+            iNumeroCapitulos = @iNumeroCapitulos,
+            bTieneSedeHospitalaria = @bTieneSedeHospitalaria,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdAsignatura = @iIdAsignatura;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Asignatura SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdAsignatura = @iIdAsignatura;
+    END
+END;
+GO
+
+-- Capitulo
+CREATE PROCEDURE sp_Capitulo_Listar
+    @iIdCapitulo INT = NULL
+AS
+BEGIN
+    SELECT * FROM Capitulo
+    WHERE @iIdCapitulo IS NULL OR iIdCapitulo = @iIdCapitulo;
+END;
+GO
+
+CREATE PROCEDURE sp_Capitulo_Mantenimiento
+    @OPERACION INT,
+    @iIdCapitulo INT = NULL,
+    @iIdAsignatura INT = NULL,
+    @cNumeroCapitulo VARCHAR(10) = NULL,
+    @cNombreCapitulo VARCHAR(128) = NULL,
+    @cDescripcionCapitulo VARCHAR(8000) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Capitulo (
+            iIdAsignatura, cNumeroCapitulo, cNombreCapitulo, cDescripcionCapitulo,
+            cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdAsignatura, @cNumeroCapitulo, @cNombreCapitulo, @cDescripcionCapitulo,
+            @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Capitulo SET
+            iIdAsignatura = @iIdAsignatura,
+            cNumeroCapitulo = @cNumeroCapitulo,
+            cNombreCapitulo = @cNombreCapitulo,
+            cDescripcionCapitulo = @cDescripcionCapitulo,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdCapitulo = @iIdCapitulo;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Capitulo SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdCapitulo = @iIdCapitulo;
+    END
+END;
+GO
 -- =====================================================
 -- 8. RESTRICCIONES ADICIONALES DE INTEGRIDAD
 -- =====================================================
 
--- Restricción para validar que preguntas tipo Opción tengan al menos 2 opciones
--- (Se implementará a nivel de aplicación)
+-- RestricciÃ³n para validar que preguntas tipo OpciÃ³n tengan al menos 2 opciones
+-- (Se implementarÃ¡ a nivel de aplicaciÃ³n)
 
--- Restricción para validar que preguntas tipo Likert tengan opciones e instrucciones
--- (Se implementará a nivel de aplicación)
+-- RestricciÃ³n para validar que preguntas tipo Likert tengan opciones e instrucciones
+-- (Se implementarÃ¡ a nivel de aplicaciÃ³n)
 
--- Restricción para validar fechas de encuesta válidas
+-- RestricciÃ³n para validar fechas de encuesta vÃ¡lidas
 CREATE TRIGGER TRG_Validar_Fecha_Encuesta
 ON Encuesta
 INSTEAD OF INSERT, UPDATE
@@ -399,8 +735,8 @@ BEGIN
 END;
 
 
--- Restricción para validar que solo usuarios con @udep.edu.pe puedan autenticarse
--- (Se implementará a nivel de aplicación)
+-- RestricciÃ³n para validar que solo usuarios con @udep.edu.pe puedan autenticarse
+-- (Se implementarÃ¡ a nivel de aplicaciÃ³n)
 
 -- =====================================================
 -- COMENTARIOS FINALES
@@ -412,6 +748,6 @@ END;
 -- - Campos booleanos: b[NombreDescriptivo]
 -- - Campos enteros: i[NombreDescriptivo]
 -- - Nombres de tablas en singular con palabras separadas por guion bajo
--- - Máximo 20 caracteres por nombre
+-- - MÃ¡ximo 20 caracteres por nombre
 -- - FK claramente referenciadas
 -- - Constraints de integridad implementados
