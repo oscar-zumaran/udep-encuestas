@@ -1,0 +1,9 @@
+@page
+@model UDEP.Encuestas.Web.Pages.LoginModel
+<h2>Login</h2>
+<form method="post">
+    <label>Usuario: <input asp-for="Username" /></label><br />
+    <label>Clave: <input asp-for="Password" type="password" /></label><br />
+    <button type="submit">Ingresar</button>
+</form>
+<div asp-validation-summary="All"></div>
