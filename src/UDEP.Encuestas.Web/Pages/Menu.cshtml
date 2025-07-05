@@ -1,0 +1,9 @@
+@page
+@model UDEP.Encuestas.Web.Pages.MenuModel
+<h2>Menú</h2>
+<ul>
+@foreach (var item in Model.Items)
+{
+    <li>@item.cNombre - @item.cUrl</li>
+}
+</ul>

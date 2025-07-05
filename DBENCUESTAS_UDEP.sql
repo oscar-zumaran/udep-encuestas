@@ -714,6 +714,300 @@ GO
 -- Restricción para validar que preguntas tipo Opción tengan al menos 2 opciones
 -- (Se implementará a nivel de aplicación)
 
+-- =====================================================
+-- 9. SEGURIDAD Y MENÚ
+-- =====================================================
+
+-- Tabla: Rol
+CREATE TABLE Rol (
+    iIdRol INT IDENTITY(1,1) PRIMARY KEY,
+    cNombreRol VARCHAR(100) NOT NULL,
+    cDescripcion VARCHAR(256) NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
+);
+
+-- Tabla: Usuario
+CREATE TABLE Usuario (
+    iIdUsuario INT IDENTITY(1,1) PRIMARY KEY,
+    cUsuario VARCHAR(100) NOT NULL UNIQUE,
+    cPasswordHash VARCHAR(256) NOT NULL,
+    cCorreo VARCHAR(256) NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1
+);
+
+-- Tabla: Usuario_Rol
+CREATE TABLE Usuario_Rol (
+    iIdUsuarioRol INT IDENTITY(1,1) PRIMARY KEY,
+    iIdUsuario INT NOT NULL,
+    iIdRol INT NOT NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
+    CONSTRAINT FK_UsuarioRol_Usuario FOREIGN KEY (iIdUsuario) REFERENCES Usuario(iIdUsuario),
+    CONSTRAINT FK_UsuarioRol_Rol FOREIGN KEY (iIdRol) REFERENCES Rol(iIdRol)
+);
+
+-- Tabla: Menu
+CREATE TABLE Menu (
+    iIdMenu INT IDENTITY(1,1) PRIMARY KEY,
+    cNombre VARCHAR(100) NOT NULL,
+    cUrl VARCHAR(256) NULL,
+    iNivel INT NOT NULL,
+    iIdPadre INT NULL,
+    iOrden INT NOT NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
+    CONSTRAINT FK_Menu_Padre FOREIGN KEY (iIdPadre) REFERENCES Menu(iIdMenu)
+);
+
+-- Tabla: Rol_Menu
+CREATE TABLE Rol_Menu (
+    iIdRolMenu INT IDENTITY(1,1) PRIMARY KEY,
+    iIdRol INT NOT NULL,
+    iIdMenu INT NOT NULL,
+    cRegUser VARCHAR(100) NOT NULL,
+    fRegDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    cUpdUser VARCHAR(100) NOT NULL,
+    fUpdDate DATETIME2 NOT NULL DEFAULT GETDATE(),
+    bActive BIT NOT NULL DEFAULT 1,
+    CONSTRAINT FK_RolMenu_Rol FOREIGN KEY (iIdRol) REFERENCES Rol(iIdRol),
+    CONSTRAINT FK_RolMenu_Menu FOREIGN KEY (iIdMenu) REFERENCES Menu(iIdMenu)
+);
+
+-- Procedimientos almacenados
+
+CREATE PROCEDURE sp_Rol_Listar
+    @iIdRol INT = NULL
+AS
+BEGIN
+    SELECT * FROM Rol
+    WHERE @iIdRol IS NULL OR iIdRol = @iIdRol;
+END;
+GO
+
+CREATE PROCEDURE sp_Rol_Mantenimiento
+    @OPERACION INT,
+    @iIdRol INT = NULL,
+    @cNombreRol VARCHAR(100) = NULL,
+    @cDescripcion VARCHAR(256) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Rol (cNombreRol, cDescripcion, cRegUser, fRegDate, bActive)
+        VALUES (@cNombreRol, @cDescripcion, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Rol SET
+            cNombreRol = @cNombreRol,
+            cDescripcion = @cDescripcion,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdRol = @iIdRol;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Rol SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdRol = @iIdRol;
+    END
+END;
+GO
+
+CREATE PROCEDURE sp_Usuario_Listar
+    @iIdUsuario INT = NULL
+AS
+BEGIN
+    SELECT * FROM Usuario
+    WHERE @iIdUsuario IS NULL OR iIdUsuario = @iIdUsuario;
+END;
+GO
+
+CREATE PROCEDURE sp_Usuario_Mantenimiento
+    @OPERACION INT,
+    @iIdUsuario INT = NULL,
+    @cUsuario VARCHAR(100) = NULL,
+    @cPasswordHash VARCHAR(256) = NULL,
+    @cCorreo VARCHAR(256) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Usuario (cUsuario, cPasswordHash, cCorreo, cRegUser, fRegDate, bActive)
+        VALUES (@cUsuario, @cPasswordHash, @cCorreo, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Usuario SET
+            cUsuario = @cUsuario,
+            cPasswordHash = @cPasswordHash,
+            cCorreo = @cCorreo,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdUsuario = @iIdUsuario;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Usuario SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdUsuario = @iIdUsuario;
+    END
+END;
+GO
+
+CREATE PROCEDURE sp_Usuario_Rol_Listar
+    @iIdUsuarioRol INT = NULL
+AS
+BEGIN
+    SELECT * FROM Usuario_Rol
+    WHERE @iIdUsuarioRol IS NULL OR iIdUsuarioRol = @iIdUsuarioRol;
+END;
+GO
+
+CREATE PROCEDURE sp_Usuario_Rol_Mantenimiento
+    @OPERACION INT,
+    @iIdUsuarioRol INT = NULL,
+    @iIdUsuario INT = NULL,
+    @iIdRol INT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Usuario_Rol (iIdUsuario, iIdRol, cRegUser, fRegDate, bActive)
+        VALUES (@iIdUsuario, @iIdRol, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Usuario_Rol SET
+            iIdUsuario = @iIdUsuario,
+            iIdRol = @iIdRol,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdUsuarioRol = @iIdUsuarioRol;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Usuario_Rol SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdUsuarioRol = @iIdUsuarioRol;
+    END
+END;
+GO
+
+CREATE PROCEDURE sp_Menu_Listar
+    @iIdMenu INT = NULL
+AS
+BEGIN
+    SELECT * FROM Menu
+    WHERE @iIdMenu IS NULL OR iIdMenu = @iIdMenu;
+END;
+GO
+
+CREATE PROCEDURE sp_Menu_Mantenimiento
+    @OPERACION INT,
+    @iIdMenu INT = NULL,
+    @cNombre VARCHAR(100) = NULL,
+    @cUrl VARCHAR(256) = NULL,
+    @iNivel INT = NULL,
+    @iIdPadre INT = NULL,
+    @iOrden INT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Menu (cNombre, cUrl, iNivel, iIdPadre, iOrden, cRegUser, fRegDate, bActive)
+        VALUES (@cNombre, @cUrl, @iNivel, @iIdPadre, @iOrden, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Menu SET
+            cNombre = @cNombre,
+            cUrl = @cUrl,
+            iNivel = @iNivel,
+            iIdPadre = @iIdPadre,
+            iOrden = @iOrden,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdMenu = @iIdMenu;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Menu SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdMenu = @iIdMenu;
+    END
+END;
+GO
+
+CREATE PROCEDURE sp_Rol_Menu_Listar
+    @iIdRolMenu INT = NULL
+AS
+BEGIN
+    SELECT * FROM Rol_Menu
+    WHERE @iIdRolMenu IS NULL OR iIdRolMenu = @iIdRolMenu;
+END;
+GO
+
+CREATE PROCEDURE sp_Rol_Menu_Mantenimiento
+    @OPERACION INT,
+    @iIdRolMenu INT = NULL,
+    @iIdRol INT = NULL,
+    @iIdMenu INT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Rol_Menu (iIdRol, iIdMenu, cRegUser, fRegDate, bActive)
+        VALUES (@iIdRol, @iIdMenu, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Rol_Menu SET
+            iIdRol = @iIdRol,
+            iIdMenu = @iIdMenu,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdRolMenu = @iIdRolMenu;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Rol_Menu SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdRolMenu = @iIdRolMenu;
+    END
+END;
+GO
+
+CREATE PROCEDURE sp_MenuPorRol_Listar
+    @iIdRol INT
+AS
+BEGIN
+    SELECT M.* FROM Menu M
+    INNER JOIN Rol_Menu RM ON M.iIdMenu = RM.iIdMenu
+    WHERE RM.iIdRol = @iIdRol AND M.bActive = 1 AND RM.bActive = 1
+    ORDER BY M.iNivel, M.iOrden;
+END;
+GO
+
 -- Restricción para validar que preguntas tipo Likert tengan opciones e instrucciones
 -- (Se implementará a nivel de aplicación)
 
