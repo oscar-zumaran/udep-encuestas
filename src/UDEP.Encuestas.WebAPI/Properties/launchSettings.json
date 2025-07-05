@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "UDEP.Encuestas.WebAPI": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50468;http://localhost:50469"
+    }
+  }
+}

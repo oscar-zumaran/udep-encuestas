@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Caching.Memory;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
