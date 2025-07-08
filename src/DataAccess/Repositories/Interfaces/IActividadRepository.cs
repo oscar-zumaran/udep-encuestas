@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UDEP.Encuestas.DataAccess.Entities;
 
-namespace UDEP.Encuestas.DataAccess.Repositories
+namespace UDEP.Encuestas.DataAccess.Repositories.Interfaces
 {
     public interface IActividadRepository
     {

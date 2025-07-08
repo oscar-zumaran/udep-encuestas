@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using UDEP.Encuestas.DataAccess.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

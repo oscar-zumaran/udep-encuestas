@@ -2,7 +2,7 @@ using Microsoft.Data.SqlClient;
 using UDEP.Encuestas.Business.Models;
 using UDEP.Encuestas.DataAccess.Entities;
 using UDEP.Encuestas.DataAccess.Exceptions;
-using UDEP.Encuestas.DataAccess.Repositories;
+using UDEP.Encuestas.DataAccess.Repositories.Interfaces;
 
 namespace UDEP.Encuestas.Business.Services
 {

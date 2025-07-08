@@ -1,5 +1,5 @@
 using UDEP.Encuestas.DataAccess.Entities;
-using UDEP.Encuestas.DataAccess.Repositories;
+using UDEP.Encuestas.DataAccess.Repositories.Interfaces;
 
 namespace UDEP.Encuestas.Business.Services
 {

@@ -1,6 +1,6 @@
 using UDEP.Encuestas.DataAccess.Entities;
 
-namespace UDEP.Encuestas.DataAccess.Repositories
+namespace UDEP.Encuestas.DataAccess.Repositories.Interfaces
 {
     public interface IRespuesta_LikertRepository
     {

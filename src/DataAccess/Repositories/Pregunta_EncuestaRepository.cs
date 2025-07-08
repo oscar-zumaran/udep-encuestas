@@ -3,6 +3,7 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using UDEP.Encuestas.DataAccess.Entities;
 using UDEP.Encuestas.DataAccess.Exceptions;
+using UDEP.Encuestas.DataAccess.Repositories.Interfaces;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
