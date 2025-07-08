@@ -34,8 +34,11 @@ namespace UDEP.Encuestas.DataAccess.Repositories
 
         public async Task MantenimientoAsync(int operacion, Actividad entity, string user)
         {
-            var parameters = new DynamicParameters(entity);
+            var parameters = new DynamicParameters();
             parameters.Add("@OPERACION", operacion);
+            parameters.Add("@iIdActividad", entity.iIdActividad);
+            parameters.Add("@cNombreActividad", entity.cNombreActividad);
+            parameters.Add("@cDescripcionActividad", entity.cDescripcionActividad);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
             try
