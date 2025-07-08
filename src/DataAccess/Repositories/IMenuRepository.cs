@@ -2,11 +2,10 @@ using UDEP.Encuestas.DataAccess.Entities;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    /// <summary>
-    /// Define operaciones específicas para la entidad Menu.
-    /// </summary>
-    public interface IMenuRepository : IGenericRepository<Menu>
+    public interface IMenuRepository
     {
+        Task<IEnumerable<Menu>> ListarAsync(int? id);
+        Task MantenimientoAsync(int operacion, Menu entity, string user);
         Task<IEnumerable<Menu>> ListarPorRolAsync(int idRol);
     }
 }

@@ -6,23 +6,23 @@ using UDEP.Encuestas.DataAccess.Exceptions;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    public class DepartamentoRepository : IDepartamentoRepository
+    public class Asignacion_Componente_ActividadRepository : IAsignacion_Componente_ActividadRepository
     {
         private readonly IDbConnection _connection;
 
-        public DepartamentoRepository(IDbConnection connection)
+        public Asignacion_Componente_ActividadRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Departamento>> ListarAsync(int? id)
+        public async Task<IEnumerable<Asignacion_Componente_Actividad>> ListarAsync(int? id)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@iIdDepartamento", id);
+            parameters.Add("@iIdAsignacion", id);
             try
             {
-                return await _connection.QueryAsync<Departamento>(
-                    "sp_Departamento_Listar",
+                return await _connection.QueryAsync<Asignacion_Componente_Actividad>(
+                    "sp_Asignacion_Componente_Actividad_Listar",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
@@ -32,19 +32,19 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             }
         }
 
-        public async Task MantenimientoAsync(int operacion, Departamento depto, string user)
+        public async Task MantenimientoAsync(int operacion, Asignacion_Componente_Actividad entity, string user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@OPERACION", operacion);
-            parameters.Add("@iIdDepartamento", depto.iIdDepartamento);
-            parameters.Add("@cNombreDepartamento", depto.cNombreDepartamento);
-            parameters.Add("@cCorreoInstitucional", depto.cCorreoInstitucional);
+            parameters.Add("@iIdAsignacion", entity.iIdAsignacion);
+            parameters.Add("@iIdActividad", entity.iIdActividad);
+            parameters.Add("@iIdComponente", entity.iIdComponente);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
             try
             {
                 await _connection.ExecuteAsync(
-                    "sp_Departamento_Mantenimiento",
+                    "sp_Asignacion_Componente_Actividad_Mantenimiento",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }

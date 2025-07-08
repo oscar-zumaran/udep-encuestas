@@ -6,23 +6,23 @@ using UDEP.Encuestas.DataAccess.Exceptions;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    public class DepartamentoRepository : IDepartamentoRepository
+    public class Log_AccesoRepository : ILog_AccesoRepository
     {
         private readonly IDbConnection _connection;
 
-        public DepartamentoRepository(IDbConnection connection)
+        public Log_AccesoRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Departamento>> ListarAsync(int? id)
+        public async Task<IEnumerable<Log_Acceso>> ListarAsync(int? id)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@iIdDepartamento", id);
+            parameters.Add("@iIdLogAcceso", id);
             try
             {
-                return await _connection.QueryAsync<Departamento>(
-                    "sp_Departamento_Listar",
+                return await _connection.QueryAsync<Log_Acceso>(
+                    "sp_Log_Acceso_Listar",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
@@ -32,19 +32,23 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             }
         }
 
-        public async Task MantenimientoAsync(int operacion, Departamento depto, string user)
+        public async Task MantenimientoAsync(int operacion, Log_Acceso entity, string user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@OPERACION", operacion);
-            parameters.Add("@iIdDepartamento", depto.iIdDepartamento);
-            parameters.Add("@cNombreDepartamento", depto.cNombreDepartamento);
-            parameters.Add("@cCorreoInstitucional", depto.cCorreoInstitucional);
+            parameters.Add("@iIdLogAcceso", entity.iIdLogAcceso);
+            parameters.Add("@cUsuario", entity.cUsuario);
+            parameters.Add("@cIPAddress", entity.cIPAddress);
+            parameters.Add("@fTimestamp", entity.fTimestamp);
+            parameters.Add("@cResultado", entity.cResultado);
+            parameters.Add("@cUserAgent", entity.cUserAgent);
+            parameters.Add("@cDetallesError", entity.cDetallesError);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
             try
             {
                 await _connection.ExecuteAsync(
-                    "sp_Departamento_Mantenimiento",
+                    "sp_Log_Acceso_Mantenimiento",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }

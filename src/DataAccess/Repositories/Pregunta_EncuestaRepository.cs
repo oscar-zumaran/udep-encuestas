@@ -6,26 +6,23 @@ using UDEP.Encuestas.DataAccess.Exceptions;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    /// <summary>
-    /// Implementación de IMenuRepository utilizando procedimientos almacenados.
-    /// </summary>
-    public class MenuRepository : IMenuRepository
+    public class Pregunta_EncuestaRepository : IPregunta_EncuestaRepository
     {
         private readonly IDbConnection _connection;
 
-        public MenuRepository(IDbConnection connection)
+        public Pregunta_EncuestaRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Menu>> ListarAsync(int? id)
+        public async Task<IEnumerable<Pregunta_Encuesta>> ListarAsync(int? id)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@iIdMenu", id);
+            parameters.Add("@iIdPreguntaEncuesta", id);
             try
             {
-                return await _connection.QueryAsync<Menu>(
-                    "sp_Menu_Listar",
+                return await _connection.QueryAsync<Pregunta_Encuesta>(
+                    "sp_Pregunta_Encuesta_Listar",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
@@ -35,22 +32,27 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             }
         }
 
-        public async Task MantenimientoAsync(int operacion, Menu entity, string user)
+        public async Task MantenimientoAsync(int operacion, Pregunta_Encuesta entity, string user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@OPERACION", operacion);
-            parameters.Add("@iIdMenu", entity.iIdMenu);
-            parameters.Add("@cNombre", entity.cNombre);
-            parameters.Add("@cUrl", entity.cUrl);
-            parameters.Add("@iNivel", entity.iNivel);
-            parameters.Add("@iIdPadre", entity.iIdPadre);
+            parameters.Add("@iIdPreguntaEncuesta", entity.iIdPreguntaEncuesta);
+            parameters.Add("@iIdEncuesta", entity.iIdEncuesta);
+            parameters.Add("@iIdPregunta", entity.iIdPregunta);
+            parameters.Add("@cTipoPregunta", entity.cTipoPregunta);
+            parameters.Add("@cDescripcion", entity.cDescripcion);
+            parameters.Add("@bVariasRespuestas", entity.bVariasRespuestas);
+            parameters.Add("@bRespuestaLarga", entity.bRespuestaLarga);
+            parameters.Add("@iNivelCalificacion", entity.iNivelCalificacion);
+            parameters.Add("@bObligatoria", entity.bObligatoria);
             parameters.Add("@iOrden", entity.iOrden);
+            parameters.Add("@bActiva", entity.bActiva);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
             try
             {
                 await _connection.ExecuteAsync(
-                    "sp_Menu_Mantenimiento",
+                    "sp_Pregunta_Encuesta_Mantenimiento",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
@@ -58,16 +60,6 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             {
                 throw new DataAccessException(ex.Message, ex);
             }
-        }
-
-        public async Task<IEnumerable<Menu>> ListarPorRolAsync(int idRol)
-        {
-            var parameters = new DynamicParameters();
-            parameters.Add("@iIdRol", idRol);
-            return await _connection.QueryAsync<Menu>(
-                "sp_MenuPorRol_Listar",
-                parameters,
-                commandType: CommandType.StoredProcedure);
         }
     }
 }

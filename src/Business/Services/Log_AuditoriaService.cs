@@ -3,9 +3,21 @@ using UDEP.Encuestas.DataAccess.Repositories;
 
 namespace UDEP.Encuestas.Business.Services
 {
-    public class Log_AuditoriaService : GenericService<Log_Auditoria>
+    public class Log_AuditoriaService
     {
-        public Log_AuditoriaService(IGenericRepository<Log_Auditoria> repo) : base(repo) { }
-        public Task EliminarAsync(int id, string user) => base.EliminarAsync(id, nameof(Log_Auditoria.iIdLogAuditoria), user);
+        private readonly ILog_AuditoriaRepository _repository;
+
+        public Log_AuditoriaService(ILog_AuditoriaRepository repo)
+        {
+            _repository = repo;
+        }
+
+        public Task<IEnumerable<Log_Auditoria>> ListarAsync(int? id) => _repository.ListarAsync(id);
+
+        public Task RegistrarAsync(Log_Auditoria entity, string user) => _repository.MantenimientoAsync(1, entity, user);
+
+        public Task ActualizarAsync(Log_Auditoria entity, string user) => _repository.MantenimientoAsync(2, entity, user);
+
+        public Task EliminarAsync(int id, string user) => _repository.MantenimientoAsync(3, new Log_Auditoria { iIdLogAuditoria = id }, user);
     }
 }

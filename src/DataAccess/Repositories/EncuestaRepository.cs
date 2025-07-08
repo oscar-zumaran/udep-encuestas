@@ -6,23 +6,23 @@ using UDEP.Encuestas.DataAccess.Exceptions;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    public class DepartamentoRepository : IDepartamentoRepository
+    public class EncuestaRepository : IEncuestaRepository
     {
         private readonly IDbConnection _connection;
 
-        public DepartamentoRepository(IDbConnection connection)
+        public EncuestaRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Departamento>> ListarAsync(int? id)
+        public async Task<IEnumerable<Encuesta>> ListarAsync(int? id)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@iIdDepartamento", id);
+            parameters.Add("@iIdEncuesta", id);
             try
             {
-                return await _connection.QueryAsync<Departamento>(
-                    "sp_Departamento_Listar",
+                return await _connection.QueryAsync<Encuesta>(
+                    "sp_Encuesta_Listar",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
@@ -32,19 +32,24 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             }
         }
 
-        public async Task MantenimientoAsync(int operacion, Departamento depto, string user)
+        public async Task MantenimientoAsync(int operacion, Encuesta entity, string user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@OPERACION", operacion);
-            parameters.Add("@iIdDepartamento", depto.iIdDepartamento);
-            parameters.Add("@cNombreDepartamento", depto.cNombreDepartamento);
-            parameters.Add("@cCorreoInstitucional", depto.cCorreoInstitucional);
+            parameters.Add("@iIdEncuesta", entity.iIdEncuesta);
+            parameters.Add("@iIdOfertaAcademica", entity.iIdOfertaAcademica);
+            parameters.Add("@cTitulo", entity.cTitulo);
+            parameters.Add("@cInstrucciones", entity.cInstrucciones);
+            parameters.Add("@fFechaHoraInicio", entity.fFechaHoraInicio);
+            parameters.Add("@fFechaHoraFin", entity.fFechaHoraFin);
+            parameters.Add("@bEsAnonima", entity.bEsAnonima);
+            parameters.Add("@bActiva", entity.bActiva);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
             try
             {
                 await _connection.ExecuteAsync(
-                    "sp_Departamento_Mantenimiento",
+                    "sp_Encuesta_Mantenimiento",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }

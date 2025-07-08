@@ -3,12 +3,21 @@ using UDEP.Encuestas.DataAccess.Repositories;
 
 namespace UDEP.Encuestas.Business.Services
 {
-    /// <summary>
-    /// Lógica de negocios para Componente.
-    /// </summary>
-    public class ComponenteService : GenericService<Componente>
+    public class ComponenteService
     {
-        public ComponenteService(IGenericRepository<Componente> repo) : base(repo) { }
-        public Task EliminarAsync(int id, string user) => base.EliminarAsync(id, nameof(Componente.iIdComponente), user);
+        private readonly IComponenteRepository _repository;
+
+        public ComponenteService(IComponenteRepository repo)
+        {
+            _repository = repo;
+        }
+
+        public Task<IEnumerable<Componente>> ListarAsync(int? id) => _repository.ListarAsync(id);
+
+        public Task RegistrarAsync(Componente entity, string user) => _repository.MantenimientoAsync(1, entity, user);
+
+        public Task ActualizarAsync(Componente entity, string user) => _repository.MantenimientoAsync(2, entity, user);
+
+        public Task EliminarAsync(int id, string user) => _repository.MantenimientoAsync(3, new Componente { iIdComponente = id }, user);
     }
 }

@@ -1,12 +1,11 @@
 using System.Data;
 using Dapper;
+using Microsoft.Data.SqlClient;
 using UDEP.Encuestas.DataAccess.Entities;
+using UDEP.Encuestas.DataAccess.Exceptions;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    /// <summary>
-    /// Implementación Dapper para Periodo utilizando procedimientos almacenados.
-    /// </summary>
     public class PeriodoRepository : IPeriodoRepository
     {
         private readonly IDbConnection _connection;
@@ -20,10 +19,17 @@ namespace UDEP.Encuestas.DataAccess.Repositories
         {
             var parameters = new DynamicParameters();
             parameters.Add("@iIdPeriodo", id);
-            return await _connection.QueryAsync<Periodo>(
-                "sp_Periodo_Listar",
-                parameters,
-                commandType: CommandType.StoredProcedure);
+            try
+            {
+                return await _connection.QueryAsync<Periodo>(
+                    "sp_Periodo_Listar",
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch (SqlException ex)
+            {
+                throw new DataAccessException(ex.Message, ex);
+            }
         }
 
         public async Task MantenimientoAsync(int operacion, Periodo periodo, string user)
@@ -38,11 +44,17 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             parameters.Add("@fFechaCulminacion", periodo.fFechaCulminacion);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
-
-            await _connection.ExecuteAsync(
-                "sp_Periodo_Mantenimiento",
-                parameters,
-                commandType: CommandType.StoredProcedure);
+            try
+            {
+                await _connection.ExecuteAsync(
+                    "sp_Periodo_Mantenimiento",
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch (SqlException ex)
+            {
+                throw new DataAccessException(ex.Message, ex);
+            }
         }
     }
 }

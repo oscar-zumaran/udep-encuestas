@@ -6,23 +6,23 @@ using UDEP.Encuestas.DataAccess.Exceptions;
 
 namespace UDEP.Encuestas.DataAccess.Repositories
 {
-    public class DepartamentoRepository : IDepartamentoRepository
+    public class Opcion_Pregunta_EncuestaRepository : IOpcion_Pregunta_EncuestaRepository
     {
         private readonly IDbConnection _connection;
 
-        public DepartamentoRepository(IDbConnection connection)
+        public Opcion_Pregunta_EncuestaRepository(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public async Task<IEnumerable<Departamento>> ListarAsync(int? id)
+        public async Task<IEnumerable<Opcion_Pregunta_Encuesta>> ListarAsync(int? id)
         {
             var parameters = new DynamicParameters();
-            parameters.Add("@iIdDepartamento", id);
+            parameters.Add("@iIdOpcionPreguntaEncuesta", id);
             try
             {
-                return await _connection.QueryAsync<Departamento>(
-                    "sp_Departamento_Listar",
+                return await _connection.QueryAsync<Opcion_Pregunta_Encuesta>(
+                    "sp_Opcion_Pregunta_Encuesta_Listar",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
@@ -32,19 +32,23 @@ namespace UDEP.Encuestas.DataAccess.Repositories
             }
         }
 
-        public async Task MantenimientoAsync(int operacion, Departamento depto, string user)
+        public async Task MantenimientoAsync(int operacion, Opcion_Pregunta_Encuesta entity, string user)
         {
             var parameters = new DynamicParameters();
             parameters.Add("@OPERACION", operacion);
-            parameters.Add("@iIdDepartamento", depto.iIdDepartamento);
-            parameters.Add("@cNombreDepartamento", depto.cNombreDepartamento);
-            parameters.Add("@cCorreoInstitucional", depto.cCorreoInstitucional);
+            parameters.Add("@iIdOpcionPreguntaEncuesta", entity.iIdOpcionPreguntaEncuesta);
+            parameters.Add("@iIdEncuesta", entity.iIdEncuesta);
+            parameters.Add("@iIdPreguntaEncuesta", entity.iIdPreguntaEncuesta);
+            parameters.Add("@iIdPregunta", entity.iIdPregunta);
+            parameters.Add("@iIdOpcionPregunta", entity.iIdOpcionPregunta);
+            parameters.Add("@cDescripcionOpcion", entity.cDescripcionOpcion);
+            parameters.Add("@bActiva", entity.bActiva);
             parameters.Add("@cRegUser", user);
             parameters.Add("@cUpdUser", user);
             try
             {
                 await _connection.ExecuteAsync(
-                    "sp_Departamento_Mantenimiento",
+                    "sp_Opcion_Pregunta_Encuesta_Mantenimiento",
                     parameters,
                     commandType: CommandType.StoredProcedure);
             }
