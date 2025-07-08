@@ -40,16 +40,14 @@ builder.Services.AddScoped<IGenericRepository<Asignatura>>(sp =>
     new GenericRepository<Asignatura>(sp.GetRequiredService<IDbConnection>(), "Asignatura", "iIdAsignatura"));
 builder.Services.AddScoped<IGenericRepository<Capitulo>>(sp =>
     new GenericRepository<Capitulo>(sp.GetRequiredService<IDbConnection>(), "Capitulo", "iIdCapitulo"));
-builder.Services.AddScoped<IGenericRepository<Actividad>>(sp =>
-    new GenericRepository<Actividad>(sp.GetRequiredService<IDbConnection>(), "Actividad", "iIdActividad"));
+builder.Services.AddScoped<IActividadRepository, ActividadRepository>();
 builder.Services.AddScoped<IGenericRepository<Asignacion_Actividad_Capitulo>>(sp =>
     new GenericRepository<Asignacion_Actividad_Capitulo>(sp.GetRequiredService<IDbConnection>(), "Asignacion_Actividad_Capitulo", "iIdAsignacion"));
 builder.Services.AddScoped<IGenericRepository<Asignacion_Componente_Actividad>>(sp =>
     new GenericRepository<Asignacion_Componente_Actividad>(sp.GetRequiredService<IDbConnection>(), "Asignacion_Componente_Actividad", "iIdAsignacion"));
 builder.Services.AddScoped<IGenericRepository<Dimension>>(sp =>
     new GenericRepository<Dimension>(sp.GetRequiredService<IDbConnection>(), "Dimension", "iIdDimension"));
-builder.Services.AddScoped<IGenericRepository<Pregunta>>(sp =>
-    new GenericRepository<Pregunta>(sp.GetRequiredService<IDbConnection>(), "Pregunta", "iIdPregunta"));
+builder.Services.AddScoped<IPreguntaRepository, PreguntaRepository>();
 builder.Services.AddScoped<IGenericRepository<Opcion_Pregunta>>(sp =>
     new GenericRepository<Opcion_Pregunta>(sp.GetRequiredService<IDbConnection>(), "Opcion_Pregunta", "iIdOpcion"));
 builder.Services.AddScoped<IGenericRepository<Instruccion_Pregunta>>(sp =>
@@ -64,8 +62,7 @@ builder.Services.AddScoped<IGenericRepository<Opcion_Pregunta_Encuesta>>(sp =>
     new GenericRepository<Opcion_Pregunta_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Opcion_Pregunta_Encuesta", "iIdOpcionPreguntaEncuesta"));
 builder.Services.AddScoped<IGenericRepository<Instruccion_Pregunta_Encuesta>>(sp =>
     new GenericRepository<Instruccion_Pregunta_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Instruccion_Pregunta_Encuesta", "iIdInstruccionPreguntaEncuesta"));
-builder.Services.AddScoped<IGenericRepository<Sesion_Encuesta>>(sp =>
-    new GenericRepository<Sesion_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Sesion_Encuesta", "iIdSesion"));
+builder.Services.AddScoped<ISesion_EncuestaRepository, Sesion_EncuestaRepository>();
 builder.Services.AddScoped<IGenericRepository<Respuesta_Opcion>>(sp =>
     new GenericRepository<Respuesta_Opcion>(sp.GetRequiredService<IDbConnection>(), "Respuesta_Opcion", "iIdRespuesta"));
 builder.Services.AddScoped<IGenericRepository<Respuesta_Texto>>(sp =>

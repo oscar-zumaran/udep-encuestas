@@ -707,6 +707,864 @@ BEGIN
     END
 END;
 GO
+-- Actividad
+CREATE PROCEDURE sp_Actividad_Listar
+    @iIdActividad INT = NULL
+AS
+BEGIN
+    SELECT * FROM Actividad
+    WHERE @iIdActividad IS NULL OR iIdActividad = @iIdActividad;
+END;
+GO
+
+CREATE PROCEDURE sp_Actividad_Mantenimiento
+    @OPERACION INT,
+    @iIdActividad INT = NULL,
+    @cNombreActividad VARCHAR(128) = NULL,
+    @cDescripcionActividad VARCHAR(8000) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Actividad (cNombreActividad, cDescripcionActividad, cRegUser, fRegDate, bActive)
+        VALUES (@cNombreActividad, @cDescripcionActividad, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Actividad SET
+            cNombreActividad = @cNombreActividad,
+            cDescripcionActividad = @cDescripcionActividad,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdActividad = @iIdActividad;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Actividad SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdActividad = @iIdActividad;
+    END
+END;
+GO
+
+-- Asignacion_Actividad_Capitulo
+CREATE PROCEDURE sp_Asignacion_Actividad_Capitulo_Listar
+    @iIdAsignacion INT = NULL
+AS
+BEGIN
+    SELECT * FROM Asignacion_Actividad_Capitulo
+    WHERE @iIdAsignacion IS NULL OR iIdAsignacion = @iIdAsignacion;
+END;
+GO
+
+CREATE PROCEDURE sp_Asignacion_Actividad_Capitulo_Mantenimiento
+    @OPERACION INT,
+    @iIdAsignacion INT = NULL,
+    @iIdAsignatura INT = NULL,
+    @iIdCapitulo INT = NULL,
+    @iIdActividad INT = NULL,
+    @cUsuarioAsignador VARCHAR(100) = NULL,
+    @fFechaAsignacion DATETIME2 = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Asignacion_Actividad_Capitulo (
+            iIdAsignatura, iIdCapitulo, iIdActividad,
+            cUsuarioAsignador, fFechaAsignacion, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdAsignatura, @iIdCapitulo, @iIdActividad,
+            @cUsuarioAsignador, GETDATE(), @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Asignacion_Actividad_Capitulo SET
+            iIdAsignatura = @iIdAsignatura,
+            iIdCapitulo = @iIdCapitulo,
+            iIdActividad = @iIdActividad,
+            cUsuarioAsignador = @cUsuarioAsignador,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdAsignacion = @iIdAsignacion;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Asignacion_Actividad_Capitulo SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdAsignacion = @iIdAsignacion;
+    END
+END;
+GO
+
+-- Asignacion_Componente_Actividad
+CREATE PROCEDURE sp_Asignacion_Componente_Actividad_Listar
+    @iIdAsignacion INT = NULL
+AS
+BEGIN
+    SELECT * FROM Asignacion_Componente_Actividad
+    WHERE @iIdAsignacion IS NULL OR iIdAsignacion = @iIdAsignacion;
+END;
+GO
+
+CREATE PROCEDURE sp_Asignacion_Componente_Actividad_Mantenimiento
+    @OPERACION INT,
+    @iIdAsignacion INT = NULL,
+    @iIdActividad INT = NULL,
+    @iIdComponente INT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Asignacion_Componente_Actividad (
+            iIdActividad, iIdComponente, cRegUser, fRegDate, bActive)
+        VALUES (@iIdActividad, @iIdComponente, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Asignacion_Componente_Actividad SET
+            iIdActividad = @iIdActividad,
+            iIdComponente = @iIdComponente,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdAsignacion = @iIdAsignacion;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Asignacion_Componente_Actividad SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdAsignacion = @iIdAsignacion;
+    END
+END;
+GO
+
+-- Dimension
+CREATE PROCEDURE sp_Dimension_Listar
+    @iIdDimension INT = NULL
+AS
+BEGIN
+    SELECT * FROM Dimension
+    WHERE @iIdDimension IS NULL OR iIdDimension = @iIdDimension;
+END;
+GO
+
+CREATE PROCEDURE sp_Dimension_Mantenimiento
+    @OPERACION INT,
+    @iIdDimension INT = NULL,
+    @cNombreDimension VARCHAR(128) = NULL,
+    @cDescripcion VARCHAR(8000) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Dimension (cNombreDimension, cDescripcion, cRegUser, fRegDate, bActive)
+        VALUES (@cNombreDimension, @cDescripcion, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Dimension SET
+            cNombreDimension = @cNombreDimension,
+            cDescripcion = @cDescripcion,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdDimension = @iIdDimension;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Dimension SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdDimension = @iIdDimension;
+    END
+END;
+GO
+
+-- Encuesta
+CREATE PROCEDURE sp_Encuesta_Listar
+    @iIdEncuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Encuesta
+    WHERE @iIdEncuesta IS NULL OR iIdEncuesta = @iIdEncuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Encuesta_Mantenimiento
+    @OPERACION INT,
+    @iIdEncuesta INT = NULL,
+    @iIdOfertaAcademica INT = NULL,
+    @cTitulo VARCHAR(2048) = NULL,
+    @cInstrucciones VARCHAR(8000) = NULL,
+    @fFechaHoraInicio DATETIME2 = NULL,
+    @fFechaHoraFin DATETIME2 = NULL,
+    @bEsAnonima BIT = NULL,
+    @bActiva BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Encuesta (
+            iIdOfertaAcademica, cTitulo, cInstrucciones, fFechaHoraInicio,
+            fFechaHoraFin, bEsAnonima, bActiva, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdOfertaAcademica, @cTitulo, @cInstrucciones, @fFechaHoraInicio,
+            @fFechaHoraFin, @bEsAnonima, @bActiva, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Encuesta SET
+            iIdOfertaAcademica = @iIdOfertaAcademica,
+            cTitulo = @cTitulo,
+            cInstrucciones = @cInstrucciones,
+            fFechaHoraInicio = @fFechaHoraInicio,
+            fFechaHoraFin = @fFechaHoraFin,
+            bEsAnonima = @bEsAnonima,
+            bActiva = @bActiva,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdEncuesta = @iIdEncuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Encuesta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdEncuesta = @iIdEncuesta;
+    END
+END;
+GO
+
+-- Instruccion_Pregunta
+CREATE PROCEDURE sp_Instruccion_Pregunta_Listar
+    @iIdInstruccion INT = NULL
+AS
+BEGIN
+    SELECT * FROM Instruccion_Pregunta
+    WHERE @iIdInstruccion IS NULL OR iIdInstruccion = @iIdInstruccion;
+END;
+GO
+
+CREATE PROCEDURE sp_Instruccion_Pregunta_Mantenimiento
+    @OPERACION INT,
+    @iIdInstruccion INT = NULL,
+    @iIdPregunta INT = NULL,
+    @cDescripcionInstruccion VARCHAR(8000) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Instruccion_Pregunta (
+            iIdPregunta, cDescripcionInstruccion, cRegUser, fRegDate, bActive)
+        VALUES (@iIdPregunta, @cDescripcionInstruccion, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Instruccion_Pregunta SET
+            iIdPregunta = @iIdPregunta,
+            cDescripcionInstruccion = @cDescripcionInstruccion,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdInstruccion = @iIdInstruccion;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Instruccion_Pregunta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdInstruccion = @iIdInstruccion;
+    END
+END;
+GO
+
+-- Instruccion_Pregunta_Encuesta
+CREATE PROCEDURE sp_Instruccion_Pregunta_Encuesta_Listar
+    @iIdInstruccionPreguntaEncuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Instruccion_Pregunta_Encuesta
+    WHERE @iIdInstruccionPreguntaEncuesta IS NULL OR iIdInstruccionPreguntaEncuesta = @iIdInstruccionPreguntaEncuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Instruccion_Pregunta_Encuesta_Mantenimiento
+    @OPERACION INT,
+    @iIdInstruccionPreguntaEncuesta INT = NULL,
+    @iIdEncuesta INT = NULL,
+    @iIdPreguntaEncuesta INT = NULL,
+    @iIdPregunta INT = NULL,
+    @iIdInstruccionPregunta INT = NULL,
+    @cDescripcionInstruccion VARCHAR(8000) = NULL,
+    @bActiva BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Instruccion_Pregunta_Encuesta (
+            iIdEncuesta, iIdPreguntaEncuesta, iIdPregunta, iIdInstruccionPregunta,
+            cDescripcionInstruccion, bActiva, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdEncuesta, @iIdPreguntaEncuesta, @iIdPregunta, @iIdInstruccionPregunta,
+            @cDescripcionInstruccion, @bActiva, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Instruccion_Pregunta_Encuesta SET
+            iIdEncuesta = @iIdEncuesta,
+            iIdPreguntaEncuesta = @iIdPreguntaEncuesta,
+            iIdPregunta = @iIdPregunta,
+            iIdInstruccionPregunta = @iIdInstruccionPregunta,
+            cDescripcionInstruccion = @cDescripcionInstruccion,
+            bActiva = @bActiva,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdInstruccionPreguntaEncuesta = @iIdInstruccionPreguntaEncuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Instruccion_Pregunta_Encuesta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdInstruccionPreguntaEncuesta = @iIdInstruccionPreguntaEncuesta;
+    END
+END;
+GO
+
+-- Oferta_Academica
+CREATE PROCEDURE sp_Oferta_Academica_Listar
+    @iIdOfertaAcademica INT = NULL
+AS
+BEGIN
+    SELECT * FROM Oferta_Academica
+    WHERE @iIdOfertaAcademica IS NULL OR iIdOfertaAcademica = @iIdOfertaAcademica;
+END;
+GO
+
+CREATE PROCEDURE sp_Oferta_Academica_Mantenimiento
+    @OPERACION INT,
+    @iIdOfertaAcademica INT = NULL,
+    @iIdPeriodo INT = NULL,
+    @iIdAsignatura INT = NULL,
+    @iNumeroMatriculados INT = NULL,
+    @cJefeCurso VARCHAR(100) = NULL,
+    @iAprobados INT = NULL,
+    @iDesaprobados INT = NULL,
+    @iRetirados INT = NULL,
+    @iAnulaciones INT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Oferta_Academica (
+            iIdPeriodo, iIdAsignatura, iNumeroMatriculados, cJefeCurso,
+            iAprobados, iDesaprobados, iRetirados, iAnulaciones,
+            cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdPeriodo, @iIdAsignatura, @iNumeroMatriculados, @cJefeCurso,
+            @iAprobados, @iDesaprobados, @iRetirados, @iAnulaciones,
+            @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Oferta_Academica SET
+            iIdPeriodo = @iIdPeriodo,
+            iIdAsignatura = @iIdAsignatura,
+            iNumeroMatriculados = @iNumeroMatriculados,
+            cJefeCurso = @cJefeCurso,
+            iAprobados = @iAprobados,
+            iDesaprobados = @iDesaprobados,
+            iRetirados = @iRetirados,
+            iAnulaciones = @iAnulaciones,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdOfertaAcademica = @iIdOfertaAcademica;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Oferta_Academica SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdOfertaAcademica = @iIdOfertaAcademica;
+    END
+END;
+GO
+
+-- Opcion_Pregunta
+CREATE PROCEDURE sp_Opcion_Pregunta_Listar
+    @iIdOpcion INT = NULL
+AS
+BEGIN
+    SELECT * FROM Opcion_Pregunta
+    WHERE @iIdOpcion IS NULL OR iIdOpcion = @iIdOpcion;
+END;
+GO
+
+CREATE PROCEDURE sp_Opcion_Pregunta_Mantenimiento
+    @OPERACION INT,
+    @iIdOpcion INT = NULL,
+    @iIdPregunta INT = NULL,
+    @cDescripcionOpcion VARCHAR(8000) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Opcion_Pregunta (iIdPregunta, cDescripcionOpcion, cRegUser, fRegDate, bActive)
+        VALUES (@iIdPregunta, @cDescripcionOpcion, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Opcion_Pregunta SET
+            iIdPregunta = @iIdPregunta,
+            cDescripcionOpcion = @cDescripcionOpcion,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdOpcion = @iIdOpcion;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Opcion_Pregunta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdOpcion = @iIdOpcion;
+    END
+END;
+GO
+
+-- Opcion_Pregunta_Encuesta
+CREATE PROCEDURE sp_Opcion_Pregunta_Encuesta_Listar
+    @iIdOpcionPreguntaEncuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Opcion_Pregunta_Encuesta
+    WHERE @iIdOpcionPreguntaEncuesta IS NULL OR iIdOpcionPreguntaEncuesta = @iIdOpcionPreguntaEncuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Opcion_Pregunta_Encuesta_Mantenimiento
+    @OPERACION INT,
+    @iIdOpcionPreguntaEncuesta INT = NULL,
+    @iIdEncuesta INT = NULL,
+    @iIdPreguntaEncuesta INT = NULL,
+    @iIdPregunta INT = NULL,
+    @iIdOpcionPregunta INT = NULL,
+    @cDescripcionOpcion VARCHAR(8000) = NULL,
+    @bActiva BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Opcion_Pregunta_Encuesta (
+            iIdEncuesta, iIdPreguntaEncuesta, iIdPregunta, iIdOpcionPregunta,
+            cDescripcionOpcion, bActiva, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdEncuesta, @iIdPreguntaEncuesta, @iIdPregunta, @iIdOpcionPregunta,
+            @cDescripcionOpcion, @bActiva, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Opcion_Pregunta_Encuesta SET
+            iIdEncuesta = @iIdEncuesta,
+            iIdPreguntaEncuesta = @iIdPreguntaEncuesta,
+            iIdPregunta = @iIdPregunta,
+            iIdOpcionPregunta = @iIdOpcionPregunta,
+            cDescripcionOpcion = @cDescripcionOpcion,
+            bActiva = @bActiva,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdOpcionPreguntaEncuesta = @iIdOpcionPreguntaEncuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Opcion_Pregunta_Encuesta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdOpcionPreguntaEncuesta = @iIdOpcionPreguntaEncuesta;
+    END
+END;
+GO
+
+-- Pregunta
+CREATE PROCEDURE sp_Pregunta_Listar
+    @iIdPregunta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Pregunta
+    WHERE @iIdPregunta IS NULL OR iIdPregunta = @iIdPregunta;
+END;
+GO
+
+CREATE PROCEDURE sp_Pregunta_Mantenimiento
+    @OPERACION INT,
+    @iIdPregunta INT = NULL,
+    @iIdComponente INT = NULL,
+    @cTipoPregunta CHAR(1) = NULL,
+    @cDescripcion VARCHAR(8000) = NULL,
+    @bVariasRespuestas BIT = NULL,
+    @bRespuestaLarga BIT = NULL,
+    @iNivelCalificacion INT = NULL,
+    @bObligatoria BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Pregunta (
+            iIdComponente, cTipoPregunta, cDescripcion, bVariasRespuestas,
+            bRespuestaLarga, iNivelCalificacion, bObligatoria,
+            cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdComponente, @cTipoPregunta, @cDescripcion, @bVariasRespuestas,
+            @bRespuestaLarga, @iNivelCalificacion, @bObligatoria,
+            @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Pregunta SET
+            iIdComponente = @iIdComponente,
+            cTipoPregunta = @cTipoPregunta,
+            cDescripcion = @cDescripcion,
+            bVariasRespuestas = @bVariasRespuestas,
+            bRespuestaLarga = @bRespuestaLarga,
+            iNivelCalificacion = @iNivelCalificacion,
+            bObligatoria = @bObligatoria,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdPregunta = @iIdPregunta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Pregunta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdPregunta = @iIdPregunta;
+    END
+END;
+GO
+
+-- Pregunta_Encuesta
+CREATE PROCEDURE sp_Pregunta_Encuesta_Listar
+    @iIdPreguntaEncuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Pregunta_Encuesta
+    WHERE @iIdPreguntaEncuesta IS NULL OR iIdPreguntaEncuesta = @iIdPreguntaEncuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Pregunta_Encuesta_Mantenimiento
+    @OPERACION INT,
+    @iIdPreguntaEncuesta INT = NULL,
+    @iIdEncuesta INT = NULL,
+    @iIdPregunta INT = NULL,
+    @cTipoPregunta CHAR(1) = NULL,
+    @cDescripcion VARCHAR(8000) = NULL,
+    @bVariasRespuestas BIT = NULL,
+    @bRespuestaLarga BIT = NULL,
+    @iNivelCalificacion INT = NULL,
+    @bObligatoria BIT = NULL,
+    @iOrden INT = NULL,
+    @bActiva BIT = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Pregunta_Encuesta (
+            iIdEncuesta, iIdPregunta, cTipoPregunta, cDescripcion,
+            bVariasRespuestas, bRespuestaLarga, iNivelCalificacion,
+            bObligatoria, iOrden, bActiva, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdEncuesta, @iIdPregunta, @cTipoPregunta, @cDescripcion,
+            @bVariasRespuestas, @bRespuestaLarga, @iNivelCalificacion,
+            @bObligatoria, @iOrden, @bActiva, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Pregunta_Encuesta SET
+            iIdEncuesta = @iIdEncuesta,
+            iIdPregunta = @iIdPregunta,
+            cTipoPregunta = @cTipoPregunta,
+            cDescripcion = @cDescripcion,
+            bVariasRespuestas = @bVariasRespuestas,
+            bRespuestaLarga = @bRespuestaLarga,
+            iNivelCalificacion = @iNivelCalificacion,
+            bObligatoria = @bObligatoria,
+            iOrden = @iOrden,
+            bActiva = @bActiva,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdPreguntaEncuesta = @iIdPreguntaEncuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Pregunta_Encuesta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdPreguntaEncuesta = @iIdPreguntaEncuesta;
+    END
+END;
+GO
+
+-- Respuesta_Calificacion
+CREATE PROCEDURE sp_Respuesta_Calificacion_Listar
+    @iIdRespuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Respuesta_Calificacion
+    WHERE @iIdRespuesta IS NULL OR iIdRespuesta = @iIdRespuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Respuesta_Calificacion_Mantenimiento
+    @OPERACION INT,
+    @iIdRespuesta INT = NULL,
+    @iIdSesion INT = NULL,
+    @iIdPreguntaEncuesta INT = NULL,
+    @iValorCalificacion INT = NULL,
+    @cUsuarioRespuesta VARCHAR(100) = NULL,
+    @fFechaRespuesta DATETIME2 = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Respuesta_Calificacion (
+            iIdSesion, iIdPreguntaEncuesta, iValorCalificacion,
+            cUsuarioRespuesta, fFechaRespuesta, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdSesion, @iIdPreguntaEncuesta, @iValorCalificacion,
+            @cUsuarioRespuesta, GETDATE(), @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Respuesta_Calificacion SET
+            iIdSesion = @iIdSesion,
+            iIdPreguntaEncuesta = @iIdPreguntaEncuesta,
+            iValorCalificacion = @iValorCalificacion,
+            cUsuarioRespuesta = @cUsuarioRespuesta,
+            fFechaRespuesta = @fFechaRespuesta,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Respuesta_Calificacion SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+END;
+GO
+
+-- Respuesta_Likert
+CREATE PROCEDURE sp_Respuesta_Likert_Listar
+    @iIdRespuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Respuesta_Likert
+    WHERE @iIdRespuesta IS NULL OR iIdRespuesta = @iIdRespuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Respuesta_Likert_Mantenimiento
+    @OPERACION INT,
+    @iIdRespuesta INT = NULL,
+    @iIdSesion INT = NULL,
+    @iIdPreguntaEncuesta INT = NULL,
+    @iIdOpcionSeleccionada INT = NULL,
+    @iIdInstruccion INT = NULL,
+    @cUsuarioRespuesta VARCHAR(100) = NULL,
+    @fFechaRespuesta DATETIME2 = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Respuesta_Likert (
+            iIdSesion, iIdPreguntaEncuesta, iIdOpcionSeleccionada, iIdInstruccion,
+            cUsuarioRespuesta, fFechaRespuesta, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdSesion, @iIdPreguntaEncuesta, @iIdOpcionSeleccionada, @iIdInstruccion,
+            @cUsuarioRespuesta, GETDATE(), @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Respuesta_Likert SET
+            iIdSesion = @iIdSesion,
+            iIdPreguntaEncuesta = @iIdPreguntaEncuesta,
+            iIdOpcionSeleccionada = @iIdOpcionSeleccionada,
+            iIdInstruccion = @iIdInstruccion,
+            cUsuarioRespuesta = @cUsuarioRespuesta,
+            fFechaRespuesta = @fFechaRespuesta,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Respuesta_Likert SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+END;
+GO
+
+-- Respuesta_Opcion
+CREATE PROCEDURE sp_Respuesta_Opcion_Listar
+    @iIdRespuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Respuesta_Opcion
+    WHERE @iIdRespuesta IS NULL OR iIdRespuesta = @iIdRespuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Respuesta_Opcion_Mantenimiento
+    @OPERACION INT,
+    @iIdRespuesta INT = NULL,
+    @iIdSesion INT = NULL,
+    @iIdPreguntaEncuesta INT = NULL,
+    @iIdOpcionSeleccionada INT = NULL,
+    @cUsuarioRespuesta VARCHAR(100) = NULL,
+    @fFechaRespuesta DATETIME2 = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Respuesta_Opcion (
+            iIdSesion, iIdPreguntaEncuesta, iIdOpcionSeleccionada,
+            cUsuarioRespuesta, fFechaRespuesta, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdSesion, @iIdPreguntaEncuesta, @iIdOpcionSeleccionada,
+            @cUsuarioRespuesta, GETDATE(), @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Respuesta_Opcion SET
+            iIdSesion = @iIdSesion,
+            iIdPreguntaEncuesta = @iIdPreguntaEncuesta,
+            iIdOpcionSeleccionada = @iIdOpcionSeleccionada,
+            cUsuarioRespuesta = @cUsuarioRespuesta,
+            fFechaRespuesta = @fFechaRespuesta,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Respuesta_Opcion SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+END;
+GO
+
+-- Respuesta_Texto
+CREATE PROCEDURE sp_Respuesta_Texto_Listar
+    @iIdRespuesta INT = NULL
+AS
+BEGIN
+    SELECT * FROM Respuesta_Texto
+    WHERE @iIdRespuesta IS NULL OR iIdRespuesta = @iIdRespuesta;
+END;
+GO
+
+CREATE PROCEDURE sp_Respuesta_Texto_Mantenimiento
+    @OPERACION INT,
+    @iIdRespuesta INT = NULL,
+    @iIdSesion INT = NULL,
+    @iIdPreguntaEncuesta INT = NULL,
+    @cTextoRespuesta VARCHAR(8000) = NULL,
+    @cUsuarioRespuesta VARCHAR(100) = NULL,
+    @fFechaRespuesta DATETIME2 = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Respuesta_Texto (
+            iIdSesion, iIdPreguntaEncuesta, cTextoRespuesta,
+            cUsuarioRespuesta, fFechaRespuesta, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdSesion, @iIdPreguntaEncuesta, @cTextoRespuesta,
+            @cUsuarioRespuesta, GETDATE(), @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Respuesta_Texto SET
+            iIdSesion = @iIdSesion,
+            iIdPreguntaEncuesta = @iIdPreguntaEncuesta,
+            cTextoRespuesta = @cTextoRespuesta,
+            cUsuarioRespuesta = @cUsuarioRespuesta,
+            fFechaRespuesta = @fFechaRespuesta,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Respuesta_Texto SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdRespuesta = @iIdRespuesta;
+    END
+END;
+GO
+
+-- Sesion_Encuesta
+CREATE PROCEDURE sp_Sesion_Encuesta_Listar
+    @iIdSesion INT = NULL
+AS
+BEGIN
+    SELECT * FROM Sesion_Encuesta
+    WHERE @iIdSesion IS NULL OR iIdSesion = @iIdSesion;
+END;
+GO
+
+CREATE PROCEDURE sp_Sesion_Encuesta_Mantenimiento
+    @OPERACION INT,
+    @iIdSesion INT = NULL,
+    @iIdEncuesta INT = NULL,
+    @cUsuarioRespuesta VARCHAR(100) = NULL,
+    @fFechaInicio DATETIME2 = NULL,
+    @fFechaCompletado DATETIME2 = NULL,
+    @cEstado VARCHAR(20) = NULL,
+    @cIPAddress VARCHAR(45) = NULL,
+    @cCodigoConfirmacion VARCHAR(50) = NULL,
+    @cRegUser VARCHAR(100) = NULL,
+    @cUpdUser VARCHAR(100) = NULL
+AS
+BEGIN
+    IF @OPERACION = 1
+    BEGIN
+        INSERT INTO Sesion_Encuesta (
+            iIdEncuesta, cUsuarioRespuesta, fFechaInicio, fFechaCompletado,
+            cEstado, cIPAddress, cCodigoConfirmacion, cRegUser, fRegDate, bActive)
+        VALUES (
+            @iIdEncuesta, @cUsuarioRespuesta, GETDATE(), @fFechaCompletado,
+            @cEstado, @cIPAddress, @cCodigoConfirmacion, @cRegUser, GETDATE(), 1);
+    END
+    ELSE IF @OPERACION = 2
+    BEGIN
+        UPDATE Sesion_Encuesta SET
+            iIdEncuesta = @iIdEncuesta,
+            cUsuarioRespuesta = @cUsuarioRespuesta,
+            fFechaInicio = @fFechaInicio,
+            fFechaCompletado = @fFechaCompletado,
+            cEstado = @cEstado,
+            cIPAddress = @cIPAddress,
+            cCodigoConfirmacion = @cCodigoConfirmacion,
+            cUpdUser = @cUpdUser,
+            fUpdDate = GETDATE()
+        WHERE iIdSesion = @iIdSesion;
+    END
+    ELSE IF @OPERACION = 3
+    BEGIN
+        UPDATE Sesion_Encuesta SET bActive = 0, cUpdUser = @cUpdUser, fUpdDate = GETDATE()
+        WHERE iIdSesion = @iIdSesion;
+    END
+END;
+GO
+
 -- =====================================================
 -- 8. RESTRICCIONES ADICIONALES DE INTEGRIDAD
 -- =====================================================
