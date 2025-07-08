@@ -34,58 +34,28 @@ builder.Services.AddTransient<IDbConnection>(sp => new SqlConnection(
 
 builder.Services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
 builder.Services.AddScoped<IPeriodoRepository, PeriodoRepository>();
-builder.Services.AddScoped<IGenericRepository<Componente>>(sp =>
-    new GenericRepository<Componente>(sp.GetRequiredService<IDbConnection>(), "Componente", "iIdComponente"));
-builder.Services.AddScoped<IGenericRepository<Asignatura>>(sp =>
-    new GenericRepository<Asignatura>(sp.GetRequiredService<IDbConnection>(), "Asignatura", "iIdAsignatura"));
-builder.Services.AddScoped<IGenericRepository<Capitulo>>(sp =>
-    new GenericRepository<Capitulo>(sp.GetRequiredService<IDbConnection>(), "Capitulo", "iIdCapitulo"));
-builder.Services.AddScoped<IGenericRepository<Actividad>>(sp =>
-    new GenericRepository<Actividad>(sp.GetRequiredService<IDbConnection>(), "Actividad", "iIdActividad"));
-builder.Services.AddScoped<IGenericRepository<Asignacion_Actividad_Capitulo>>(sp =>
-    new GenericRepository<Asignacion_Actividad_Capitulo>(sp.GetRequiredService<IDbConnection>(), "Asignacion_Actividad_Capitulo", "iIdAsignacion"));
-builder.Services.AddScoped<IGenericRepository<Asignacion_Componente_Actividad>>(sp =>
-    new GenericRepository<Asignacion_Componente_Actividad>(sp.GetRequiredService<IDbConnection>(), "Asignacion_Componente_Actividad", "iIdAsignacion"));
-builder.Services.AddScoped<IGenericRepository<Dimension>>(sp =>
-    new GenericRepository<Dimension>(sp.GetRequiredService<IDbConnection>(), "Dimension", "iIdDimension"));
-builder.Services.AddScoped<IGenericRepository<Pregunta>>(sp =>
-    new GenericRepository<Pregunta>(sp.GetRequiredService<IDbConnection>(), "Pregunta", "iIdPregunta"));
-builder.Services.AddScoped<IGenericRepository<Opcion_Pregunta>>(sp =>
-    new GenericRepository<Opcion_Pregunta>(sp.GetRequiredService<IDbConnection>(), "Opcion_Pregunta", "iIdOpcion"));
-builder.Services.AddScoped<IGenericRepository<Instruccion_Pregunta>>(sp =>
-    new GenericRepository<Instruccion_Pregunta>(sp.GetRequiredService<IDbConnection>(), "Instruccion_Pregunta", "iIdInstruccion"));
-builder.Services.AddScoped<IGenericRepository<Oferta_Academica>>(sp =>
-    new GenericRepository<Oferta_Academica>(sp.GetRequiredService<IDbConnection>(), "Oferta_Academica", "iIdOfertaAcademica"));
-builder.Services.AddScoped<IGenericRepository<Encuesta>>(sp =>
-    new GenericRepository<Encuesta>(sp.GetRequiredService<IDbConnection>(), "Encuesta", "iIdEncuesta"));
-builder.Services.AddScoped<IGenericRepository<Pregunta_Encuesta>>(sp =>
-    new GenericRepository<Pregunta_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Pregunta_Encuesta", "iIdPreguntaEncuesta"));
-builder.Services.AddScoped<IGenericRepository<Opcion_Pregunta_Encuesta>>(sp =>
-    new GenericRepository<Opcion_Pregunta_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Opcion_Pregunta_Encuesta", "iIdOpcionPreguntaEncuesta"));
-builder.Services.AddScoped<IGenericRepository<Instruccion_Pregunta_Encuesta>>(sp =>
-    new GenericRepository<Instruccion_Pregunta_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Instruccion_Pregunta_Encuesta", "iIdInstruccionPreguntaEncuesta"));
-builder.Services.AddScoped<IGenericRepository<Sesion_Encuesta>>(sp =>
-    new GenericRepository<Sesion_Encuesta>(sp.GetRequiredService<IDbConnection>(), "Sesion_Encuesta", "iIdSesion"));
-builder.Services.AddScoped<IGenericRepository<Respuesta_Opcion>>(sp =>
-    new GenericRepository<Respuesta_Opcion>(sp.GetRequiredService<IDbConnection>(), "Respuesta_Opcion", "iIdRespuesta"));
-builder.Services.AddScoped<IGenericRepository<Respuesta_Texto>>(sp =>
-    new GenericRepository<Respuesta_Texto>(sp.GetRequiredService<IDbConnection>(), "Respuesta_Texto", "iIdRespuesta"));
-builder.Services.AddScoped<IGenericRepository<Respuesta_Calificacion>>(sp =>
-    new GenericRepository<Respuesta_Calificacion>(sp.GetRequiredService<IDbConnection>(), "Respuesta_Calificacion", "iIdRespuesta"));
-builder.Services.AddScoped<IGenericRepository<Respuesta_Likert>>(sp =>
-    new GenericRepository<Respuesta_Likert>(sp.GetRequiredService<IDbConnection>(), "Respuesta_Likert", "iIdRespuesta"));
-builder.Services.AddScoped<IGenericRepository<Log_Acceso>>(sp =>
-    new GenericRepository<Log_Acceso>(sp.GetRequiredService<IDbConnection>(), "Log_Acceso", "iIdLogAcceso"));
-builder.Services.AddScoped<IGenericRepository<Log_Auditoria>>(sp =>
-    new GenericRepository<Log_Auditoria>(sp.GetRequiredService<IDbConnection>(), "Log_Auditoria", "iIdLogAuditoria"));
-builder.Services.AddScoped<IGenericRepository<Rol>>(sp =>
-    new GenericRepository<Rol>(sp.GetRequiredService<IDbConnection>(), "Rol", "iIdRol"));
-builder.Services.AddScoped<IGenericRepository<Usuario>>(sp =>
-    new GenericRepository<Usuario>(sp.GetRequiredService<IDbConnection>(), "Usuario", "iIdUsuario"));
-builder.Services.AddScoped<IGenericRepository<Usuario_Rol>>(sp =>
-    new GenericRepository<Usuario_Rol>(sp.GetRequiredService<IDbConnection>(), "Usuario_Rol", "iIdUsuarioRol"));
-builder.Services.AddScoped<IGenericRepository<Rol_Menu>>(sp =>
-    new GenericRepository<Rol_Menu>(sp.GetRequiredService<IDbConnection>(), "Rol_Menu", "iIdRolMenu"));
+builder.Services.AddScoped<IComponenteRepository, ComponenteRepository>();
+builder.Services.AddScoped<IAsignaturaRepository, AsignaturaRepository>();
+builder.Services.AddScoped<ICapituloRepository, CapituloRepository>();
+builder.Services.AddScoped<IActividadRepository, ActividadRepository>();
+builder.Services.AddScoped<IAsignacion_Actividad_CapituloRepository, Asignacion_Actividad_CapituloRepository>();
+builder.Services.AddScoped<IAsignacion_Componente_ActividadRepository, Asignacion_Componente_ActividadRepository>();
+builder.Services.AddScoped<IDimensionRepository, DimensionRepository>();
+builder.Services.AddScoped<IPreguntaRepository, PreguntaRepository>();
+builder.Services.AddScoped<IOpcion_PreguntaRepository, Opcion_PreguntaRepository>();
+builder.Services.AddScoped<IInstruccion_PreguntaRepository, Instruccion_PreguntaRepository>();
+builder.Services.AddScoped<IOferta_AcademicaRepository, Oferta_AcademicaRepository>();
+builder.Services.AddScoped<IEncuestaRepository, EncuestaRepository>();
+builder.Services.AddScoped<IPregunta_EncuestaRepository, Pregunta_EncuestaRepository>();
+builder.Services.AddScoped<IOpcion_Pregunta_EncuestaRepository, Opcion_Pregunta_EncuestaRepository>();
+builder.Services.AddScoped<IInstruccion_Pregunta_EncuestaRepository, Instruccion_Pregunta_EncuestaRepository>();
+builder.Services.AddScoped<ISesion_EncuestaRepository, Sesion_EncuestaRepository>();
+builder.Services.AddScoped<IRespuesta_OpcionRepository, Respuesta_OpcionRepository>();
+builder.Services.AddScoped<IRespuesta_TextoRepository, Respuesta_TextoRepository>();
+builder.Services.AddScoped<IRespuesta_CalificacionRepository, Respuesta_CalificacionRepository>();
+builder.Services.AddScoped<IRespuesta_LikertRepository, Respuesta_LikertRepository>();
+builder.Services.AddScoped<ILog_AccesoRepository, Log_AccesoRepository>();
+builder.Services.AddScoped<ILog_AuditoriaRepository, Log_AuditoriaRepository>();
 builder.Services.AddScoped<IMenuRepository, MenuRepository>();
 
 // Servicios de negocio

@@ -1,7 +1,8 @@
-using UDEP.Encuestas.Business.Services;
-using UDEP.Encuestas.DataAccess.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UDEP.Encuestas.Business.Models;
+using UDEP.Encuestas.Business.Services;
+using UDEP.Encuestas.DataAccess.Entities;
 
 namespace UDEP.Encuestas.WebAPI.Controllers
 {
@@ -23,31 +24,42 @@ namespace UDEP.Encuestas.WebAPI.Controllers
         public async Task<IActionResult> Get(int? id)
         {
             var result = await _service.ListarAsync(id);
-            return Ok(result);
+            return result.ResultType switch
+            {
+                ResultType.Success => Ok(result.Data),
+                ResultType.SqlError => BadRequest(result.Message),
+                _ => StatusCode(500, result.Message)
+            };
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(Sesion_Encuesta entity)
         {
             var user = User.Identity?.Name ?? "anonymous";
-            await _service.RegistrarAsync(entity, user);
-            return Ok();
+            var result = await _service.RegistrarAsync(entity, user);
+            if (result.ResultType == ResultType.Success) return Ok();
+            if (result.ResultType == ResultType.SqlError) return BadRequest(result.Message);
+            return StatusCode(500, result.Message);
         }
 
         [HttpPut]
         public async Task<IActionResult> Put(Sesion_Encuesta entity)
         {
             var user = User.Identity?.Name ?? "anonymous";
-            await _service.ActualizarAsync(entity, user);
-            return Ok();
+            var result = await _service.ActualizarAsync(entity, user);
+            if (result.ResultType == ResultType.Success) return Ok();
+            if (result.ResultType == ResultType.SqlError) return BadRequest(result.Message);
+            return StatusCode(500, result.Message);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var user = User.Identity?.Name ?? "anonymous";
-            await _service.EliminarAsync(id, user);
-            return Ok();
+            var result = await _service.EliminarAsync(id, user);
+            if (result.ResultType == ResultType.Success) return Ok();
+            if (result.ResultType == ResultType.SqlError) return BadRequest(result.Message);
+            return StatusCode(500, result.Message);
         }
     }
 }

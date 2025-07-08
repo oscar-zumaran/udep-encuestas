@@ -3,9 +3,21 @@ using UDEP.Encuestas.DataAccess.Repositories;
 
 namespace UDEP.Encuestas.Business.Services
 {
-    public class Oferta_AcademicaService : GenericService<Oferta_Academica>
+    public class Oferta_AcademicaService
     {
-        public Oferta_AcademicaService(IGenericRepository<Oferta_Academica> repo) : base(repo) { }
-        public Task EliminarAsync(int id, string user) => base.EliminarAsync(id, nameof(Oferta_Academica.iIdOfertaAcademica), user);
+        private readonly IOferta_AcademicaRepository _repository;
+
+        public Oferta_AcademicaService(IOferta_AcademicaRepository repo)
+        {
+            _repository = repo;
+        }
+
+        public Task<IEnumerable<Oferta_Academica>> ListarAsync(int? id) => _repository.ListarAsync(id);
+
+        public Task RegistrarAsync(Oferta_Academica entity, string user) => _repository.MantenimientoAsync(1, entity, user);
+
+        public Task ActualizarAsync(Oferta_Academica entity, string user) => _repository.MantenimientoAsync(2, entity, user);
+
+        public Task EliminarAsync(int id, string user) => _repository.MantenimientoAsync(3, new Oferta_Academica { iIdOfertaAcademica = id }, user);
     }
 }
